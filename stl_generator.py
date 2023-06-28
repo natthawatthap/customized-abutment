@@ -131,10 +131,11 @@ def create_cylindrical(width, height, thickness, radius):
     return np.array(vertices), np.array(faces)
 
 
-def create_label_entry_pair(window, label_text):
+def create_label_entry_pair(window, label_text,default_value):
     label = tk.Label(window, text=label_text)
     label.pack()
     entry = tk.Entry(window)
+    entry.insert(tk.END, default_value)  # Set the default value
     entry.pack()
     return entry
 
@@ -158,19 +159,20 @@ shape_label = tk.Label(input_pane, text="Shape:")
 shape_label.pack()
 shape_combobox = ttk.Combobox(
     input_pane, values=["Cube", "Pyramid", "Cylindrical"])
+shape_combobox.set("Cube") 
 shape_combobox.pack()
 
-width_entry = create_label_entry_pair(input_pane, "Width:")
-height_entry = create_label_entry_pair(input_pane, "Height:")
-thickness_entry = create_label_entry_pair(input_pane, "Thickness:")
-radius_entry = create_label_entry_pair(input_pane, "Radius:")
+width_entry = create_label_entry_pair(input_pane, "Width:", "0.3")
+height_entry = create_label_entry_pair(input_pane, "Height:", "0.3")
+thickness_entry = create_label_entry_pair(input_pane, "Thickness:", "0.3")
+radius_entry = create_label_entry_pair(input_pane, "Radius:", "0.3")
 
 
 preview_button = tk.Button(
     input_pane, text="Preview Model", command=update_preview)
 preview_button.pack()
 
-filename_entry = create_label_entry_pair(input_pane, "Filename:")
+filename_entry = create_label_entry_pair(input_pane, "Filename:", "model")
 
 generate_button = tk.Button(
     input_pane, text="Generate STL", command=generate_stl_file)
