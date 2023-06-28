@@ -10,9 +10,9 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 def generate_stl_file():
     filename = filename_entry.get() + ".stl"
     shape = shape_combobox.get()
-    width, height, thickness = map(
-        float, (width_entry.get(), height_entry.get(), thickness_entry.get()))
-    vertices, faces = create_geometry(shape, width, height, thickness)
+    width, height, thickness, radius = map(
+        float, (width_entry.get(), height_entry.get(), thickness_entry.get(), radius_entry.get()))
+    vertices, faces = create_geometry(shape, width, height, thickness, radius)
 
     mesh_data = mesh.Mesh(np.zeros(faces.shape[0], dtype=mesh.Mesh.dtype))
     mesh_data.vectors = vertices[faces]
@@ -22,9 +22,11 @@ def generate_stl_file():
 
 def update_preview():
     shape = shape_combobox.get()
-    width, height, thickness = map(
-        float, (width_entry.get(), height_entry.get(), thickness_entry.get()))
-    vertices, faces = create_geometry(shape, width, height, thickness)
+    width = float(width_entry.get() or '0')
+    height = float(height_entry.get() or '0')
+    thickness = float(thickness_entry.get() or '0')
+    radius = float(radius_entry.get() or '0')
+    vertices, faces = create_geometry(shape, width, height, thickness, radius)
 
     ax.cla()
     ax.add_collection3d(mplot3d.art3d.Poly3DCollection(vertices[faces]))
@@ -35,14 +37,17 @@ def update_preview():
     canvas.draw()
 
 
-def create_geometry(shape, width, height, thickness):
+def create_geometry(shape, width, height, thickness, radius):
     if shape == "Cube":
         return create_cube(width, height, thickness)
     elif shape == "Pyramid":
         return create_pyramid(width, height, thickness)
+    elif shape == "Cylindrical":
+        return create_cylindrical(width, height, thickness, radius)
     else:
         # Default to cube if shape is not recognized
         return create_cube(width, height, thickness)
+
 
 def create_cube(width, height, thickness):
     vertices = np.array([
@@ -73,6 +78,7 @@ def create_cube(width, height, thickness):
 
     return vertices, faces
 
+
 def create_pyramid(width, height, thickness):
     vertices = np.array([
         [0, 0, 0],
@@ -92,6 +98,38 @@ def create_pyramid(width, height, thickness):
     ])
 
     return vertices, faces
+
+
+def create_cylindrical(width, height, thickness, radius):
+    # Calculate the number of points for the circular base
+    num_points = 50
+
+    # Generate the vertices for the cylindrical shape
+    vertices = []
+    for i in range(num_points):
+        angle = 2 * np.pi * i / num_points
+        x = radius * np.cos(angle)
+        y = radius * np.sin(angle)
+        vertices.append([x, y, 0])
+        vertices.append([x, y, thickness])
+    vertices.append([0, 0, 0])
+    vertices.append([0, 0, thickness])
+
+    # Generate the faces for the cylindrical shape
+    faces = []
+    for i in range(num_points):
+        next_i = (i + 1) % num_points
+        faces.append([i * 2, i * 2 + 1, next_i * 2 + 1])
+        faces.append([i * 2, next_i * 2 + 1, next_i * 2])
+        faces.append([i * 2, next_i * 2, i * 2 + 1])
+        faces.append([i * 2 + 1, next_i * 2, next_i * 2 + 1])
+    for i in range(num_points):
+        faces.append([i * 2, i * 2 + 1, num_points * 2])
+        faces.append([i * 2 + 1, (i + 1) * 2 %
+                     (num_points * 2), num_points * 2 + 1])
+
+    return np.array(vertices), np.array(faces)
+
 
 def create_label_entry_pair(window, label_text):
     label = tk.Label(window, text=label_text)
@@ -118,13 +156,14 @@ pane.add(input_pane, weight=1)
 
 shape_label = tk.Label(input_pane, text="Shape:")
 shape_label.pack()
-shape_combobox = ttk.Combobox(input_pane, values=["Cube", "Pyramid"])
+shape_combobox = ttk.Combobox(
+    input_pane, values=["Cube", "Pyramid", "Cylindrical"])
 shape_combobox.pack()
-
 
 width_entry = create_label_entry_pair(input_pane, "Width:")
 height_entry = create_label_entry_pair(input_pane, "Height:")
 thickness_entry = create_label_entry_pair(input_pane, "Thickness:")
+radius_entry = create_label_entry_pair(input_pane, "Radius:")
 
 
 preview_button = tk.Button(
