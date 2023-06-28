@@ -37,78 +37,61 @@ def update_preview():
 
 def create_geometry(shape, width, height, thickness):
     if shape == "Cube":
-        vertices = np.array([
-            [0, 0, 0],
-            [width, 0, 0],
-            [width, height, 0],
-            [0, height, 0],
-            [0, 0, thickness],
-            [width, 0, thickness],
-            [width, height, thickness],
-            [0, height, thickness]
-        ])
-
-        faces = np.array([
-            [0, 3, 1],
-            [1, 3, 2],
-            [0, 4, 7],
-            [0, 7, 3],
-            [4, 5, 6],
-            [4, 6, 7],
-            [5, 1, 2],
-            [5, 2, 6],
-            [2, 3, 7],
-            [2, 7, 6],
-            [0, 5, 1],
-            [0, 4, 5]
-        ])
+        return create_cube(width, height, thickness)
     elif shape == "Pyramid":
-        vertices = np.array([
-            [0, 0, 0],
-            [width, 0, 0],
-            [width, height, 0],
-            [0, height, 0],
-            [width/2, height/2, thickness]
-        ])
-
-        faces = np.array([
-            [0, 1, 4],
-            [1, 2, 4],
-            [2, 3, 4],
-            [3, 0, 4],
-            [0, 3, 1],
-            [1, 3, 2]
-        ])
+        return create_pyramid(width, height, thickness)
     else:
         # Default to cube if shape is not recognized
-        vertices = np.array([
-            [0, 0, 0],
-            [width, 0, 0],
-            [width, height, 0],
-            [0, height, 0],
-            [0, 0, thickness],
-            [width, 0, thickness],
-            [width, height, thickness],
-            [0, height, thickness]
-        ])
+        return create_cube(width, height, thickness)
 
-        faces = np.array([
-            [0, 3, 1],
-            [1, 3, 2],
-            [0, 4, 7],
-            [0, 7, 3],
-            [4, 5, 6],
-            [4, 6, 7],
-            [5, 1, 2],
-            [5, 2, 6],
-            [2, 3, 7],
-            [2, 7, 6],
-            [0, 5, 1],
-            [0, 4, 5]
-        ])
+def create_cube(width, height, thickness):
+    vertices = np.array([
+        [0, 0, 0],
+        [width, 0, 0],
+        [width, height, 0],
+        [0, height, 0],
+        [0, 0, thickness],
+        [width, 0, thickness],
+        [width, height, thickness],
+        [0, height, thickness]
+    ])
+
+    faces = np.array([
+        [0, 3, 1],
+        [1, 3, 2],
+        [0, 4, 7],
+        [0, 7, 3],
+        [4, 5, 6],
+        [4, 6, 7],
+        [5, 1, 2],
+        [5, 2, 6],
+        [2, 3, 7],
+        [2, 7, 6],
+        [0, 5, 1],
+        [0, 4, 5]
+    ])
 
     return vertices, faces
 
+def create_pyramid(width, height, thickness):
+    vertices = np.array([
+        [0, 0, 0],
+        [width, 0, 0],
+        [width, height, 0],
+        [0, height, 0],
+        [width/2, height/2, thickness]
+    ])
+
+    faces = np.array([
+        [0, 1, 4],
+        [1, 2, 4],
+        [2, 3, 4],
+        [3, 0, 4],
+        [0, 3, 1],
+        [1, 3, 2]
+    ])
+
+    return vertices, faces
 
 def create_label_entry_pair(window, label_text):
     label = tk.Label(window, text=label_text)
@@ -142,8 +125,6 @@ shape_combobox.pack()
 width_entry = create_label_entry_pair(input_pane, "Width:")
 height_entry = create_label_entry_pair(input_pane, "Height:")
 thickness_entry = create_label_entry_pair(input_pane, "Thickness:")
-
-
 
 
 preview_button = tk.Button(
