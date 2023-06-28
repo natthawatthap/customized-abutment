@@ -3,19 +3,27 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from stl import mesh
 
-# Load the STL file
-stl_file = 'model2.stl'
-mesh_data = mesh.Mesh.from_file(stl_file)
+# Load the first STL file
+stl_file1 = 'model1.stl'
+mesh_data1 = mesh.Mesh.from_file(stl_file1)
+
+# Load the second STL file
+stl_file2 = 'model2.stl'
+mesh_data2 = mesh.Mesh.from_file(stl_file2)
+
+# Merge the vectors and concatenate the points
+combined_vectors = np.concatenate([mesh_data1.vectors, mesh_data2.vectors])
+combined_points = np.concatenate([mesh_data1.points, mesh_data2.points])
 
 # Create a new figure and axes
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
-# Plot the surface
-ax.add_collection3d(mplot3d.art3d.Poly3DCollection(mesh_data.vectors))
+# Plot the combined surface
+ax.add_collection3d(mplot3d.art3d.Poly3DCollection(combined_vectors))
 
 # Set the aspect ratio of the plot
-scale = np.concatenate(mesh_data.points).flatten()
+scale = combined_points.flatten()
 ax.auto_scale_xyz(scale, scale, scale)
 
 # Function to handle zoom event
