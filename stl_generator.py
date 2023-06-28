@@ -6,10 +6,12 @@ from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
+
 def generate_stl_file():
     filename = filename_entry.get() + ".stl"
     shape = shape_combobox.get()
-    width, height, thickness = map(float, (width_entry.get(), height_entry.get(), thickness_entry.get()))
+    width, height, thickness = map(
+        float, (width_entry.get(), height_entry.get(), thickness_entry.get()))
     vertices, faces = create_geometry(shape, width, height, thickness)
 
     mesh_data = mesh.Mesh(np.zeros(faces.shape[0], dtype=mesh.Mesh.dtype))
@@ -17,9 +19,11 @@ def generate_stl_file():
     mesh_data.save(filename)
     print("STL file generated successfully!")
 
+
 def update_preview():
     shape = shape_combobox.get()
-    width, height, thickness = map(float, (width_entry.get(), height_entry.get(), thickness_entry.get()))
+    width, height, thickness = map(
+        float, (width_entry.get(), height_entry.get(), thickness_entry.get()))
     vertices, faces = create_geometry(shape, width, height, thickness)
 
     ax.cla()
@@ -29,6 +33,7 @@ def update_preview():
     ax.set_zlabel('Z')
 
     canvas.draw()
+
 
 def create_geometry(shape, width, height, thickness):
     if shape == "Cube":
@@ -104,6 +109,7 @@ def create_geometry(shape, width, height, thickness):
 
     return vertices, faces
 
+
 def create_label_entry_pair(window, label_text):
     label = tk.Label(window, text=label_text)
     label.pack()
@@ -111,29 +117,50 @@ def create_label_entry_pair(window, label_text):
     entry.pack()
     return entry
 
+
 window = tk.Tk()
 window.title("STL Generator")
 
-filename_entry = create_label_entry_pair(window, "Filename:")
-width_entry = create_label_entry_pair(window, "Width:")
-height_entry = create_label_entry_pair(window, "Height:")
-thickness_entry = create_label_entry_pair(window, "Thickness:")
+# Create a PanedWindow widget
+pane = ttk.PanedWindow(window, orient=tk.HORIZONTAL)
+pane.pack(fill=tk.BOTH, expand=True)
 
-shape_label = tk.Label(window, text="Shape:")
+# Create the left pane for the preview
+preview_pane = ttk.Frame(pane)
+pane.add(preview_pane, weight=1)
+
+# Create the right pane for the input controls
+input_pane = ttk.Frame(pane)
+pane.add(input_pane, weight=1)
+
+shape_label = tk.Label(input_pane, text="Shape:")
 shape_label.pack()
-shape_combobox = ttk.Combobox(window, values=["Cube", "Pyramid"])
+shape_combobox = ttk.Combobox(input_pane, values=["Cube", "Pyramid"])
 shape_combobox.pack()
 
-generate_button = tk.Button(window, text="Generate STL", command=generate_stl_file)
+
+width_entry = create_label_entry_pair(input_pane, "Width:")
+height_entry = create_label_entry_pair(input_pane, "Height:")
+thickness_entry = create_label_entry_pair(input_pane, "Thickness:")
+
+
+
+
+preview_button = tk.Button(
+    input_pane, text="Preview Model", command=update_preview)
+preview_button.pack()
+
+filename_entry = create_label_entry_pair(input_pane, "Filename:")
+
+generate_button = tk.Button(
+    input_pane, text="Generate STL", command=generate_stl_file)
 generate_button.pack()
 
-preview_button = tk.Button(window, text="Preview Model", command=update_preview)
-preview_button.pack()
 
 fig = plt.figure()
 ax = plt.axes(projection='3d')
 
-canvas = FigureCanvasTkAgg(fig, master=window)
+canvas = FigureCanvasTkAgg(fig, master=preview_pane)
 canvas.draw()
 canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
