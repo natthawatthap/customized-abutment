@@ -44,6 +44,8 @@ def create_geometry(shape, width, height, thickness, radius):
         return create_pyramid(width, height, thickness)
     elif shape == "Cylindrical":
         return create_cylindrical(width, height, thickness, radius)
+    elif shape == "Sphere":
+        return create_sphere(radius)
     else:
         # Default to cube if shape is not recognized
         return create_cube(width, height, thickness)
@@ -130,6 +132,28 @@ def create_cylindrical(width, height, thickness, radius):
 
     return np.array(vertices), np.array(faces)
 
+def create_sphere(radius):
+    # Calculate the number of points for the sphere
+    num_points = 100
+
+    # Generate the vertices for the sphere shape
+    u = np.linspace(0, 2 * np.pi, num_points)
+    v = np.linspace(0, np.pi, num_points)
+    x = radius * np.outer(np.cos(u), np.sin(v))
+    y = radius * np.outer(np.sin(u), np.sin(v))
+    z = radius * np.outer(np.ones(np.size(u)), np.cos(v))
+
+    # Reshape the vertex arrays into a list of vertices
+    vertices = np.dstack((x, y, z)).reshape(-1, 3)
+
+    # Generate the faces for the sphere shape
+    faces = []
+    for i in range(num_points - 1):
+        for j in range(num_points - 1):
+            faces.append([i * num_points + j, i * num_points + j + 1, (i + 1) * num_points + j + 1])
+            faces.append([i * num_points + j, (i + 1) * num_points + j + 1, (i + 1) * num_points + j])
+
+    return vertices, np.array(faces)
 
 def create_label_entry_pair(window, label_text,default_value):
     label = tk.Label(window, text=label_text)
@@ -158,7 +182,7 @@ pane.add(input_pane, weight=1)
 shape_label = tk.Label(input_pane, text="Shape:")
 shape_label.pack()
 shape_combobox = ttk.Combobox(
-    input_pane, values=["Cube", "Pyramid", "Cylindrical"])
+    input_pane, values=["Cube", "Pyramid", "Cylindrical", "Sphere"])
 shape_combobox.set("Cube") 
 shape_combobox.pack()
 
