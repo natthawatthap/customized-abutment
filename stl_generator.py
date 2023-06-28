@@ -19,6 +19,24 @@ def generate_stl_file():
     mesh_data.save(filename)
     print("STL file generated successfully!")
 
+# def generate_stl_file():
+#     filename = filename_entry.get() + ".stl"
+#     shape = shape_combobox.get()
+#     width, height, thickness, radius = map(
+#         float, (width_entry.get(), height_entry.get(), thickness_entry.get(), radius_entry.get()))
+#     vertices, faces = create_geometry(shape, width, height, thickness, radius)
+
+#     mesh_data = mesh.Mesh(np.zeros(faces.shape[0], dtype=mesh.Mesh.dtype))
+#     mesh_data.vectors = vertices[faces]
+
+#     unit_comment = "  1.0000000000000000e+00  # STL file unit: mm"
+
+#     with open(filename, 'wb') as f:
+#         f.write(mesh_data.data.tobytes())
+#         f.write(unit_comment.encode())
+
+#     print("STL file generated successfully!")
+
 
 def update_preview():
     shape = shape_combobox.get()
@@ -106,7 +124,7 @@ def create_pyramid(width, height, thickness):
 
 def create_cylindrical(width, height, thickness, radius):
     # Calculate the number of points for the circular base
-    num_points = 50
+    num_points = 100
 
     # Generate the vertices for the cylindrical shape
     vertices = []
