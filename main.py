@@ -4,11 +4,11 @@ from mpl_toolkits import mplot3d
 from stl import mesh
 
 # Load the first STL file
-stl_file1 = 'model1.stl'
+stl_file1 = 'models/model1.stl'
 mesh_data1 = mesh.Mesh.from_file(stl_file1)
 
 # Load the second STL file
-stl_file2 = 'model2.stl'
+stl_file2 = 'models/model2.stl'
 mesh_data2 = mesh.Mesh.from_file(stl_file2)
 
 # Merge the vectors and concatenate the points
