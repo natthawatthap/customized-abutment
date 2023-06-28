@@ -6,9 +6,16 @@ import tkinter as tk
 from tkinter import filedialog
 
 # Function to handle button click event
+
+
 def load_stl_files():
     # Open file dialog to select the STL files
-    stl_file_paths = filedialog.askopenfilenames(filetypes=[("STL Files", "*.stl")])
+    stl_file_paths = filedialog.askopenfilenames(
+        filetypes=[("STL Files", "*.stl")])
+
+    if len(stl_file_paths) > 2:
+        print("Please select up to two STL files.")
+        return
 
     # Create a new figure and axes
     fig = plt.figure()
@@ -36,6 +43,7 @@ def load_stl_files():
 
     # Show the plot
     plt.show()
+
 
 # Create the main window
 root = tk.Tk()
