@@ -19,3 +19,13 @@ Phase 1
 CEJ - Cementoenamel junction
 C ฟัน
 E รากฟัน
+
+
+i want to have python code for load 2 stl file.
+1. when load stl file complet will show 3d model both by matplotlib
+2. put model A in position 0,0,0
+3. I can adjust the distance between model a and b in the z plane 
+4. when i adjust completed. i want to click button for generate (5)
+5. the program will generate model 3  between the two models . which can be connected to model 1 and model 2. 
+Calculated from mechs below model a and mechs above model b
+6. show model 3 
