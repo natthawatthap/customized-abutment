@@ -46,6 +46,8 @@ def create_geometry(shape, width, height, thickness, radius):
         return create_cylindrical(width, height, thickness, radius)
     elif shape == "Sphere":
         return create_sphere(radius)
+    elif shape == "Cone":
+        return create_cone(height, radius)
     else:
         # Default to cube if shape is not recognized
         return create_cube(width, height, thickness)
@@ -134,7 +136,7 @@ def create_cylindrical(width, height, thickness, radius):
 
 def create_sphere(radius):
     # Calculate the number of points for the sphere
-    num_points = 100
+    num_points = 20
 
     # Generate the vertices for the sphere shape
     u = np.linspace(0, 2 * np.pi, num_points)
@@ -154,6 +156,37 @@ def create_sphere(radius):
             faces.append([i * num_points + j, (i + 1) * num_points + j + 1, (i + 1) * num_points + j])
 
     return vertices, np.array(faces)
+
+def create_cone(height, radius):
+    # Calculate the number of points for the cone
+    num_points = 100
+
+    # Generate the vertices for the cone shape
+    vertices = []
+    for i in range(num_points):
+        angle = 2 * np.pi * i / num_points
+        x = radius * np.cos(angle)
+        y = radius * np.sin(angle)
+        vertices.append([x, y, 0])  # Base vertices
+        vertices.append([0, 0, height])  # Apex vertex
+    vertices.append([0, 0, 0])  # Base center vertex
+
+    # Generate the faces for the cone shape
+    faces = []
+    base_center_idx = len(vertices) - 1
+    for i in range(num_points):
+        next_i = (i + 1) % num_points
+        base_vertex_idx = i * 2
+        apex_vertex_idx = i * 2 + 1
+        next_base_vertex_idx = next_i * 2
+
+        # Base triangles
+        faces.append([base_vertex_idx, next_base_vertex_idx, base_center_idx])
+
+        # Cone side triangles
+        faces.append([apex_vertex_idx, base_vertex_idx, apex_vertex_idx + 1])
+
+    return np.array(vertices), np.array(faces)
 
 def create_label_entry_pair(window, label_text,default_value):
     label = tk.Label(window, text=label_text)
@@ -182,7 +215,7 @@ pane.add(input_pane, weight=1)
 shape_label = tk.Label(input_pane, text="Shape:")
 shape_label.pack()
 shape_combobox = ttk.Combobox(
-    input_pane, values=["Cube", "Pyramid", "Cylindrical", "Sphere"])
+    input_pane, values=["Cube", "Pyramid", "Cylindrical", "Sphere", "Cone"])
 shape_combobox.set("Cube") 
 shape_combobox.pack()
 
